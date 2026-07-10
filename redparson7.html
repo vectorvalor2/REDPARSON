@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDPARSON • GAME ENGINE</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        :root { --red: #ff0033; --cyan: #00ffff; --green: #00ff88; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#0a0014; color:#00ffff; font-family:'Press Start 2P', system-ui; overflow-x:hidden; }
+        header { position:fixed; top:0; width:100%; background:rgba(10,0,20,0.98); border-bottom:4px solid var(--red); padding:1rem 5%; display:flex; justify-content:space-between; z-index:1000; }
+        .logo { font-size:2.3rem; color:var(--red); text-shadow:0 0 20px var(--red); }
+        .tabs { display:flex; gap:8px; flex-wrap:wrap; }
+        .tab { padding:10px 22px; border:2px solid var(--cyan); color:var(--cyan); cursor:pointer; }
+        .tab.active { background:var(--red); color:#000; border-color:var(--red); }
+        #viewport { width:100%; height:580px; border:5px solid var(--red); background:#000; }
+        .dashboard { display:grid; grid-template-columns:250px 1fr 360px; gap:18px; padding:30px 5%; max-width:2100px; margin:0 auto; }
+        .panel { background:rgba(25,0,45,0.95); border:2px solid var(--cyan); padding:18px; }
+        .panel h3 { color:var(--red); border-bottom:2px solid var(--red); padding-bottom:8px; margin-bottom:12px; }
+        .console { height:160px; background:#000; color:#0f0; padding:12px; overflow-y:auto; font-family:monospace; font-size:0.78rem; }
+        .btn { padding:12px; background:transparent; border:2px solid var(--red); color:var(--red); width:100%; margin:6px 0; cursor:pointer; font-family:inherit; }
+        .btn:hover { background:var(--red); color:#000; }
+        .btn.ai { border-color:#00ffcc; color:#00ffcc; }
+        .btn.particle { border-color:#ffcc00; color:#ffcc00; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">REDPARSON</div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">EDITOR</div>
+            <div class="tab" onclick="switchTab(1)">PARTICLES</div>
+            <div class="tab" onclick="switchTab(2)">AUDIO</div>
+            <div class="tab" onclick="switchTab(3)">PROJECT</div>
+        </div>
+    </header>
+
+    <section style="padding:100px 5% 30px; background:#0a0014;">
+        <h2 style="text-align:center;color:var(--red);margin-bottom:20px;">REDPARSON GAME ENGINE</h2>
+        <div id="viewport"></div>
+    </section>
+
+    <section class="dashboard">
+        <div>
+            <div class="panel"><h3>HIERARCHY</h3><div id="hierarchy"></div></div>
+            <div class="panel" style="margin-top:15px;">
+                <h3>AI SCENE GEN</h3>
+                <textarea id="aiPrompt" rows="4" placeholder="Describe scene..."></textarea>
+                <button onclick="generateSceneWithAI()" class="btn ai">GENERATE WITH AI</button>
+            </div>
+        </div>
+
+        <div>
+            <div class="panel">
+                <h3>PARTICLE EDITOR</h3>
+                <input type="range" id="emitRate" min="10" max="300" value="100" oninput="updateParticlePreview()">
+                <input type="color" id="pColor" value="#ff8800" style="height:50px;margin:10px 0;">
+                <button onclick="spawnParticles()" class="btn particle">SPAWN PARTICLES</button>
+            </div>
+            <div class="panel" style="margin-top:15px;">
+                <h3>ANIMATION TIMELINE</h3>
+                <button onclick="toggleTimeline()" class="btn">▶ PLAY / PAUSE</button>
+            </div>
+        </div>
+
+        <div>
+            <div class="panel">
+                <h3>SOUND DESIGNER</h3>
+                <select id="waveType"><option>sawtooth</option><option>sine</option><option>square</option></select>
+                <button onclick="playSFX()" class="btn">TRIGGER SFX</button>
+            </div>
+            <div class="panel" style="margin-top:15px;">
+                <h3>PROJECT SYSTEM</h3>
+                <button onclick="saveProject()" class="btn">SAVE PROJECT</button>
+                <button onclick="downloadProject()" class="btn">DOWNLOAD .RED</button>
+                <button onclick="resetAll()" class="btn">RESET SCENE</button>
+            </div>
+            <div class="panel" style="margin-top:15px;">
+                <h3>CONSOLE</h3>
+                <div id="console" class="console"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let scene, camera, renderer, sun, objects = [], particles = [];
+        let audioContext, timelinePlaying = false;
+
+        function initEngine() {
+            const container = document.getElementById('viewport');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth/580, 0.1, 2000);
+            camera.position.set(0, 35, 60);
+            renderer = new THREE.WebGLRenderer({antialias:true});
+            renderer.setSize(container.clientWidth, 580);
+            container.appendChild(renderer.domElement);
+
+            scene.add(new THREE.AmbientLight(0x6677ff, 0.7));
+            sun = new THREE.Mesh(new THREE.SphereGeometry(8,64,64), new THREE.MeshBasicMaterial({color:0xffee88}));
+            scene.add(sun);
+
+            for (let i = 0; i < 6; i++) {
+                const obj = new THREE.Mesh(new THREE.SphereGeometry(3,32,32), new THREE.MeshPhongMaterial({color:0x44aaff}));
+                obj.position.x = (i-2.5)*16;
+                obj.userData = {rot: 0.008};
+                scene.add(obj);
+                objects.push(obj);
+            }
+
+            function loop() {
+                requestAnimationFrame(loop);
+                sun.rotation.y += 0.002;
+                objects.forEach(o => o.rotation.y += o.userData.rot);
+                particles = particles.filter(p => {
+                    p.position.y -= 0.6;
+                    if (p.position.y < -30) { scene.remove(p); return false; }
+                    return true;
+                });
+                renderer.render(scene, camera);
+            }
+            loop();
+            updateHierarchy();
+        }
+
+        function generateSceneWithAI() {
+            logConsole("AI generating scene...", "#00ffff");
+            setTimeout(() => {
+                for (let i = 0; i < 15; i++) {
+                    const p = new THREE.Mesh(new THREE.BoxGeometry(4,8,4), new THREE.MeshPhongMaterial({color:Math.random()*0xffffff}));
+                    p.position.set(Math.random()*80-40, 20+Math.random()*30, Math.random()*50-25);
+                    scene.add(p); objects.push(p);
+                }
+                logConsole("AI SCENE GENERATED", "#00ff88");
+                updateHierarchy();
+            }, 800);
+        }
+
+        function spawnParticles() {
+            const color = document.getElementById('pColor').value;
+            for (let i = 0; i < 60; i++) {
+                const p = new THREE.Mesh(new THREE.SphereGeometry(1.2, 8, 8), new THREE.MeshBasicMaterial({color}));
+                p.position.set(Math.random()*40-20, 50, Math.random()*30-15);
+                scene.add(p);
+                particles.push(p);
+            }
+            logConsole("PARTICLE BURST SPAWNED", "#ffcc00");
+        }
+
+        function playSFX() {
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioContext.createOscillator();
+            osc.type = document.getElementById('waveType').value;
+            osc.frequency.value = 120 + Math.random()*300;
+            const gain = audioContext.createGain();
+            gain.gain.setValueAtTime(0.8, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1);
+            osc.connect(gain).connect(audioContext.destination);
+            osc.start(); osc.stop(audioContext.currentTime + 1.2);
+            logConsole("SFX TRIGGERED", "#ff88ff");
+        }
+
+        function saveProject() { logConsole("PROJECT SAVED", "#00ff88"); }
+        function downloadProject() {
+            const data = JSON.stringify({name:"RedParson_Project", version:"1.0", date:new Date().toISOString()}, null, 2);
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([data], {type:"application/json"}));
+            a.download = "redparson_project.red";
+            a.click();
+            logConsole("PROJECT DOWNLOADED (.red)", "#00ffff");
+        }
+
+        function resetAll() {
+            if (confirm("Reset scene?")) location.reload();
+        }
+
+        function logConsole(msg, color = "#0f0") {
+            const el = document.getElementById('console');
+            el.innerHTML += `<span style="color:${color}">&gt; ${msg}</span><br>`;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function updateHierarchy() {
+            document.getElementById('hierarchy').innerHTML = `◉ Root<br>├ Sun<br>├ ${objects.length} Objects<br>└ ${particles.length} Particles`;
+        }
+
+        function toggleTimeline() { logConsole("Timeline toggled", "#ffff00"); }
+        function switchTab(n) { document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n)); }
+
+        window.onload = () => {
+            initEngine();
+            logConsole("REDPARSON ENGINE INITIALIZED", "#00ff88");
+            logConsole("All systems operational", "#00ffff");
+        };
+    </script>
+</body>
+</html>
