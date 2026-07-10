@@ -12,6 +12,13 @@ Modular & Extensible Architecture
 
 # REDPARSON Architecture
 
+### Dictionaries/Methods for Data/Code in BPS
+
+- **Bits Per Second Encoding**: Structured dictionaries for encoding and decoding operations in base44
+- **Method Registry**: Comprehensive method repositories for data transformation and code execution
+- **Base44 Conversion**: Efficient encoding/decoding of bitstream data at optimized BPS rates
+- **Cross-Layer Translation**: Data/code methods optimized for performance across all architecture layers
+
 ## Core Layers
 - **MapLayer** — Terrain, Portals, Collision Shell
 - **AssetLayer** — Models, Textures, Animations
@@ -28,7 +35,6 @@ Modular & Extensible Architecture
 
 ## Philosophy
 "Build without fear" — Everything runs in a safe sandbox.
-
 
 ## ✨ Features
 
