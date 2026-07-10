@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDPARSON • GAME ENGINE</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+        
+        :root {
+            --red: #ff0033;
+            --cyan: #00ffff;
+        }
+        
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: #0a0014;
+            color: #00ffff;
+            font-family: 'Press Start 2P', system-ui;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10,0,20,0.95);
+            border-bottom: 2px solid var(--red);
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: var(--red);
+            text-shadow: 0 0 10px var(--red);
+        }
+        
+        nav a {
+            color: var(--cyan);
+            margin: 0 1rem;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, #1a0033 0%, #0a0014 70%);
+        }
+        
+        .hero-content {
+            z-index: 10;
+        }
+        
+        .hero h1 {
+            font-size: 4.5rem;
+            color: var(--red);
+            text-shadow: 0 0 30px var(--red);
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 3px solid var(--red);
+            color: var(--red);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: var(--red);
+            color: #000;
+            box-shadow: 0 0 30px var(--red);
+        }
+        
+        #viewport {
+            width: 100%;
+            height: 600px;
+            border: 4px solid var(--red);
+            background: #000;
+            position: relative;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr 280px;
+            gap: 10px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .panel {
+            background: rgba(20,0,40,0.9);
+            border: 2px solid var(--cyan);
+            padding: 15px;
+            height: fit-content;
+        }
+        
+        .panel h3 {
+            color: var(--red);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--red);
+            padding-bottom: 8px;
+        }
+        
+        .layer {
+            padding: 8px;
+            margin: 6px 0;
+            background: rgba(0,255,255,0.1);
+            border-left: 4px solid var(--cyan);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem;
+            border-top: 2px solid var(--red);
+            font-size: 0.8rem;
+        }
+        
+        .status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            font-size: 0.8rem;
+            color: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">REDPARSON</div>
+        <nav>
+            <a href="#demo">ENGINE</a>
+            <a href="#features">FEATURES</a>
+            <a href="#sandbox">SANDBOX</a>
+            <a href="#">DOCS</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>REDPARSON</h1>
+            <p>3D GAME ENGINE + SAFE SIMULATION SUITE<br>POWERED BY THREE.JS • WEB AUDIO • CYGLOBS</p>
+            <button class="btn" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
+                LAUNCH ENGINE
+            </button>
+        </div>
+        
+        <!-- Background stars -->
+        <canvas id="starfield" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;opacity:0.6;"></canvas>
+    </section>
+
+    <section id="demo" style="padding: 80px 5% 40px; background:#0a0014;">
+        <h2 style="text-align:center; color:var(--red); margin-bottom:30px; font-size:2rem;">ENGINE VIEWPORT — SAFE MODE ACTIVE</h2>
+        
+        <div id="viewport"></div>
+        
+        <div class="status" id="status">● SAFE RENDER • 60 FPS • COLLISION INTEGRITY: 100%</div>
+    </section>
+
+    <section class="dashboard" id="features">
+        <div class="panel">
+            <h3>SCENE HIERARCHY</h3>
+            <div class="layer">◉ MapLayer</div>
+            <div class="layer"> ├ terrainGrid</div>
+            <div class="layer"> ├ portals</div>
+            <div class="layer">◉ AssetLayer</div>
+            <div class="layer"> ├ models</div>
+            <div class="layer"> ├ animations</div>
+            <div class="layer">◉ SafetyLayer <span style="color:#0f0;">[ACTIVE]</span></div>
+            <div class="layer">◉ RenderLayer</div>
+        </div>
+        
+        <div class="panel" style="grid-column: span 1;">
+            <h3>LIVE DEMO CONTROLS</h3>
+            <p style="font-size:0.8rem; margin:15px 0;">Drag planets • Click sun for burst</p>
+            <button onclick="resetOrbits()" class="btn" style="width:100%; margin:10px 0;">RESET ORBITS</button>
+            <button onclick="toggleAudio()" class="btn" style="width:100%; margin:10px 0;">TOGGLE SFX SYNTH</button>
+            
+            <div style="margin-top:20px; font-size:0.75rem;">
+                <strong>PHYSICS AUDIO ENGINE</strong><br>
+                Collision intensity → Pitch<br>
+                Burst frequency → Reverb
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h3>ASSET REGISTRY</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.8rem;">
+                <div style="background:rgba(255,0,51,0.2);padding:8px;">SUN_GLOW.glb</div>
+                <div style="background:rgba(0,255,255,0.2);padding:8px;">PLANET_01.obj</div>
+                <div style="background:rgba(255,200,0,0.2);padding:8px;">ORBIT_RING</div>
+                <div style="background:rgba(100,255,100,0.2);padding:8px;">STARFIELD.hdr</div>
+            </div>
+            
+            <h3 style="margin-top:25px;">SAFETY BOUNDS</h3>
+            <div style="color:#0f0; font-size:0.85rem;">
+                RED CUBES: ACTIVE<br>
+                GREEN CHECKPOINTS: 12/12<br>
+                ROLLBACK ANCHORS: READY
+            </div>
+        </div>
+    </section>
+
+    <section style="padding:60px 5%; background:linear-gradient(#0a0014, #1a0033);">
+        <h2 style="text-align:center; color:var(--red); margin-bottom:40px;">CORE LAYERS</h2>
+        <div style="max-width:1000px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:30px;">
+            <div style="border:2px solid var(--cyan); padding:25px;">
+                <h3 style="color:#ff0;">MAP LAYER</h3>
+                <p>Terrain • Portals • Collision Shell</p>
+            </div>
+            <div style="border:2px solid var(--cyan); padding:25px;">
+                <h3 style="color:#0f0;">SAFETY LAYER</h3>
+                <p>Red Bounding Cubes • Safe Zones • Rollback Points</p>
+            </div>
+            <div style="border:2px solid var(--cyan); padding:25px;">
+                <h3 style="color:#f0f;">TRANSFORM LAYER</h3>
+                <p>Green Dashed Checkpoints • Rotation Vectors</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>REDPARSON GAME ENGINE — SAFE SIMULATED DEVELOPMENT ENVIRONMENT</p>
+        <p style="margin-top:10px; font-size:0.7rem;">Built as a live demonstration • Three.js + Web Audio API • 2026</p>
+    </footer>
+
+    <script>
+        // Three.js Solar System Scene
+        let scene, camera, renderer;
+        let sun, planets = [];
+        let orbitSpeeds = [0.005, 0.008, 0.012, 0.02];
+        let audioContext;
+        let isAudioEnabled = true;
+        
+        function initThree() {
+            const container = document.getElementById('viewport');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / 600, 0.1, 1000);
+            camera.position.set(0, 25, 45);
+            camera.lookAt(0, 0, 0);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, 600);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambient = new THREE.AmbientLight(0x4040ff, 0.4);
+            scene.add(ambient);
+            
+            // Sun
+            const sunGeo = new THREE.SphereGeometry(6, 64, 64);
+            const sunMat = new THREE.MeshBasicMaterial({
+                color: 0xffee88,
+                emissive: 0xffaa00
+            });
+            sun = new THREE.Mesh(sunGeo, sunMat);
+            scene.add(sun);
+            
+            // Sun glow
+            const glowGeo = new THREE.SphereGeometry(7.5, 64, 64);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0xff8800,
+                transparent: true,
+                opacity: 0.25,
+                blending: THREE.AdditiveBlending
+            });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            sun.add(glow);
+            
+            // Planets
+            const colors = [0x4488ff, 0xff8844, 0x44ff88, 0xff44aa];
+            const sizes = [2.2, 3.1, 1.8, 2.6];
+            const distances = [18, 26, 35, 46];
+            
+            for (let i = 0; i < 4; i++) {
+                const geo = new THREE.SphereGeometry(sizes[i], 32, 32);
+                const mat = new THREE.MeshPhongMaterial({ 
+                    color: colors[i],
+                    emissive: colors[i],
+                    emissiveIntensity: 0.2,
+                    shininess: 10
+                });
+                const planet = new THREE.Mesh(geo, mat);
+                
+                planet.userData = {
+                    angle: Math.random() * Math.PI * 2,
+                    distance: distances[i],
+                    speed: orbitSpeeds[i]
+                };
+                
+                scene.add(planet);
+                planets.push(planet);
+            }
+            
+            // Starfield
+            const starsGeo = new THREE.BufferGeometry();
+            const starsCount = 8000;
+            const posArray = new Float32Array(starsCount * 3);
+            
+            for (let i = 0; i < starsCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 300;
+            }
+            
+            starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const starsMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.15,
+                transparent: true,
+                opacity: 0.9
+            });
+            const starPoints = new THREE.Points(starsGeo, starsMat);
+            scene.add(starPoints);
+            
+            // Orbit rings (faint)
+            for (let d of distances) {
+                const ringGeo = new THREE.RingGeometry(d - 0.1, d + 0.1, 64);
+                const ringMat = new THREE.MeshBasicMaterial({
+                    color: 0x444466,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.15
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2;
+                scene.add(ring);
+            }
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Rotate sun
+                sun.rotation.y += 0.001;
+                
+                // Orbit planets
+                planets.forEach((planet, i) => {
+                    planet.userData.angle += planet.userData.speed;
+                    const x = Math.cos(planet.userData.angle) * planet.userData.distance;
+                    const z = Math.sin(planet.userData.angle) * planet.userData.distance;
+                    planet.position.set(x, Math.sin(planet.userData.angle * 3) * 2, z);
+                    planet.rotation.y += 0.01 + i * 0.005;
+                });
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Click sun for burst
+            renderer.domElement.addEventListener('click', (e) => {
+                const rect = renderer.domElement.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                if (Math.abs(x) < 0.3 && Math.abs(y) < 0.3) {
+                    triggerBurst();
+                }
+            });
+            
+            // Resize handler
+            window.addEventListener('resize', () => {
+                const w = container.clientWidth;
+                camera.aspect = w / 600;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, 600);
+            });
+        }
+        
+        function triggerBurst() {
+            if (!isAudioEnabled) return;
+            
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // Burst sound
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(80 + Math.random() * 40, audioContext.currentTime);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1200, audioContext.currentTime);
+            
+            gain.gain.setValueAtTime(0.6, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.2);
+            
+            osc.connect(filter).connect(gain).connect(audioContext.destination);
+            osc.start();
+            osc.stop(audioContext.currentTime + 1.5);
+            
+            // Visual pulse
+            if (sun) {
+                sun.scale.set(1.3, 1.3, 1.3);
+                setTimeout(() => { if(sun) sun.scale.set(1,1,1); }, 180);
+            }
+            
+            document.getElementById('status').textContent = "● COLLISION BURST • SFX TRIGGERED";
+            setTimeout(() => {
+                document.getElementById('status').textContent = "● SAFE RENDER • 60 FPS • COLLISION INTEGRITY: 100%";
+            }, 1800);
+        }
+        
+        function resetOrbits() {
+            planets.forEach(p => {
+                p.userData.angle = Math.random() * Math.PI * 2;
+            });
+        }
+        
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            const btns = document.querySelectorAll('.btn');
+            btns.forEach(b => {
+                if (b.textContent.includes('SFX')) {
+                    b.style.color = isAudioEnabled ? '#0f0' : '#666';
+                }
+            });
+        }
+        
+        // Simple starfield background in hero
+        function createStarfield() {
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const stars = [];
+            for (let i = 0; i < 600; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2.2,
+                    speed: Math.random() * 0.3 + 0.1
+                });
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(10,0,20,0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ffffff';
+                stars.forEach(s => {
+                    ctx.globalAlpha = Math.random() * 0.7 + 0.5;
+                    ctx.fillRect(s.x, s.y, s.size, s.size);
+                    s.y += s.speed;
+                    if (s.y > canvas.height) s.y = 0;
+                });
+                
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        // Initialize everything
+        window.onload = function() {
+            initThree();
+            createStarfield();
+            
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'r' || e.key === 'R') resetOrbits();
+                if (e.key === 's' || e.key === 'S') toggleAudio();
+            });
+        };
+    </script>
+</body>
+</html>
