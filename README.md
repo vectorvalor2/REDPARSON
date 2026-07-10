@@ -8,7 +8,7 @@ Built with **Three.js + Web Audio API** — Fully functional in the browser.
 
 ## ✨ Features
 
-- Real-time 3D Viewport with orbiting planets
+- Real-time 3D Viewport
 - AI-Assisted Scene Generation
 - Advanced Particle Editor
 - Animation Timeline
