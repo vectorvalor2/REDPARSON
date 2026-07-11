@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REDPARSON • Safe 3D Game Engine</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        :root {
+            --red: #ff3333;
+            --gold: #ffd700;
+            --dark: #0a0a0a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--dark);
+            color: #eee;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(#220000, var(--dark));
+            padding: 1.5rem 5%;
+            border-bottom: 4px solid var(--red);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .hero {
+            text-align: center;
+            padding: 5rem 5% 3rem;
+            background: radial-gradient(circle at center, #330000 0%, var(--dark) 80%);
+        }
+        h1 {
+            font-size: 4.2rem;
+            color: var(--red);
+            text-shadow: 0 0 40px var(--red);
+        }
+        .tagline {
+            font-size: 1.7rem;
+            color: var(--gold);
+            margin: 1rem 0 2rem;
+        }
+        #viewport {
+            width: 100%;
+            max-width: 1280px;
+            height: 520px;
+            margin: 2rem auto;
+            border: 3px solid var(--red);
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        section {
+            padding: 4rem 5%;
+        }
+        .section-title {
+            color: var(--red);
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.8rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1a1a1a;
+            padding: 1.8rem;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+        .card:hover {
+            border-color: var(--red);
+            transform: translateY(-8px);
+        }
+        .btn {
+            background: var(--red);
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #ff6666;
+            transform: scale(1.05);
+        }
+        footer {
+            text-align: center;
+            padding: 3rem;
+            background: #050505;
+            border-top: 3px solid var(--red);
+        }
+        .highlight {
+            color: var(--gold);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>REDPARSON</h1>
+        <p style="color:#ccc;">Safe Simulated 3D Game Engine &amp; All-in-One Creative Platform</p>
+    </header>
+
+    <div class="hero">
+        <h1>REDPARSON</h1>
+        <p class="tagline">Built with Three.js + Web Audio API + Safe AI Sim</p>
+        <p style="max-width:800px; margin:0 auto 2rem; font-size:1.25rem;">
+            A fully browser-based, modular, safety-first creative platform.<br>
+            Golden ratio intelligence • Physics-driven audio • Real-time 3D
+        </p>
+        <button class="btn" onclick="simulateFileLoad()">Load .red Project</button>
+        <button class="btn" style="background:#333;" onclick="toggleAudio()">Toggle Physics Audio</button>
+    </div>
+
+    <!-- Live Viewport -->
+    <section id="demo">
+        <h2 class="section-title">Live Engine Viewport</h2>
+        <div id="viewport"></div>
+        <p style="text-align:center; color:#aaa; margin-top:1rem;">
+            Drag &amp; Drop Enabled • Golden Ratio Layout • Real-time Confidence &amp; Safety Layer
+        </p>
+    </section>
+
+    <!-- Key Features -->
+    <section>
+        <h2 class="section-title">✨ Key Features</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Safe AI Sim</h3>
+                <p>High-confidence asset pipeline with golden ratio composition, interlocking, and risk-gated rendering.</p>
+            </div>
+            <div class="card">
+                <h3>Physics + Audio Synthesis</h3>
+                <p>Collision intensity &amp; frequency drive unique, randomized sound effects in real time.</p>
+            </div>
+            <div class="card">
+                <h3>Creative Tools</h3>
+                <p>Drag-and-drop • Interactive placement • Material Editor • Scene Modifier • Project &amp; Texture Libraries</p>
+            </div>
+            <div class="card">
+                <h3>Performance &amp; Monitoring</h3>
+                <p>Real-time logs, FPS &amp; memory charts, bottleneck analysis.</p>
+            </div>
+            <div class="card">
+                <h3>Modular Architecture</h3>
+                <p>Pluggable AI provisioner • Base44 BPS encoding • Separation of concerns</p>
+            </div>
+            <div class="card">
+                <h3>Fully Responsive</h3>
+                <p>Adaptive dashboard that looks perfect on desktop, tablet, and mobile.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section style="background:#111;">
+        <h2 class="section-title">Architecture</h2>
+        <div style="max-width:1100px; margin:0 auto; background:#1a1a1a; padding:2rem; border-radius:10px;">
+            <h3 style="color:var(--gold); margin-bottom:1rem;">High-Level Flow</h3>
+            <pre style="background:#0a0a0a; padding:1.5rem; border-radius:8px; overflow:auto; color:#0f0; font-size:0.95rem;">
+CI/CD → Sandbox Zones → Asset Registry → Safety Bounds → 
+Transform Checkpoints → Golden Ratio Optimizer → 
+Scene Graph → MVP Clip Space → Risk-Gated Render → 
+Active Viewport + Physics/Audio Sync
+            </pre>
+        </div>
+    </section>
+
+    <!-- Safe AI Sim -->
+    <section>
+        <h2 class="section-title">Safe AI Sim Framework</h2>
+        <div class="grid">
+            <div class="card">
+                <strong>Golden Ratio Scene Composition</strong><br>
+                Automatic φ-based layout from abstract classes to viewport.
+            </div>
+            <div class="card">
+                <strong>Core Layers</strong><br>
+                Map • Asset • Safety (Red) • Transform (Green) • Render (Blue)
+            </div>
+            <div class="card">
+                <strong>Systems</strong><br>
+                AI Generation • Physics + Audio • Particle System • .red Serialization
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">Philosophy</h2>
+        <div style="max-width:800px; margin:0 auto; text-align:center; font-size:1.5rem;">
+            <p><strong>"Build without fear"</strong></p>
+            <p style="margin-top:1.5rem; color:#ccc;">
+                Everything runs in a safe sandbox.<br>
+                High-confidence assets • Golden ratio harmony • Real-time safety validation.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p><strong>REDPARSON GAME ENGINE</strong> — Safe • Modular • Creative</p>
+        <p style="margin:1rem 0; color:#888;">
+            Three.js • Web Audio API • Safe AI Sim • Base44 BPS Encoding
+        </p>
+        <button class="btn" onclick="alert('Project saved as example.red (demo)')">Save Project (.red)</button>
+    </footer>
+
+    <script>
+        // Three.js Setup
+        let scene, camera, renderer;
+        let objects = [];
+        let audioContext;
+        let audioEnabled = false;
+
+        function initThree() {
+            const container = document.getElementById('viewport');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0x0a0a0a);
+            container.appendChild(renderer.domElement);
+
+            // Lights
+            scene.add(new THREE.AmbientLight(0x404040));
+            const dirLight = new THREE.DirectionalLight(0xffddaa, 1.2);
+            dirLight.position.set(10, 15, 10);
+            scene.add(dirLight);
+
+            // Golden ratio box
+            const goldenMat = new THREE.MeshPhongMaterial({ color: 0xff3333, shininess: 90 });
+            const box = new THREE.Mesh(new THREE.BoxGeometry(1.618, 1.0, 1.0), goldenMat);
+            box.position.set(0, 1, 0);
+            scene.add(box);
+            objects.push(box);
+
+            // Sphere
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.8, 48, 48),
+                new THREE.MeshPhongMaterial({ color: 0x00ffcc, shininess: 100 })
+            );
+            sphere.position.set(3, 1.5, 0);
+            scene.add(sphere);
+            objects.push(sphere);
+
+            // Floor
+            const floor = new THREE.Mesh(
+                new THREE.PlaneGeometry(30, 30),
+                new THREE.MeshPhongMaterial({ color: 0x222222 })
+            );
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -0.1;
+            scene.add(floor);
+
+            camera.position.set(0, 6, 12);
+            camera.lookAt(0, 1, 0);
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.016;
+
+                objects.forEach((obj, i) => {
+                    obj.rotation.y = time * (0.3 + i * 0.2);
+                    obj.position.y = Math.sin(time + i) * 0.3 + 1;
+                });
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+
+        // Simple Audio System
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function triggerCollisionSound(intensity = 0.8) {
+            if (!audioEnabled || !audioContext) return;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(80 + Math.random() * 120, audioContext.currentTime);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(600 + intensity * 800, audioContext.currentTime);
+            
+            gain.gain.setValueAtTime(intensity * 0.6, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.6);
+
+            osc.connect(filter).connect(gain).connect(audioContext.destination);
+            osc.start();
+            osc.stop(audioContext.currentTime + 0.8);
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            if (audioEnabled) {
+                initAudio();
+                alert("Physics Audio Enabled — Collisions will now trigger dynamic SFX");
+            } else {
+                alert("Physics Audio Disabled");
+            }
+        }
+
+        function simulateFileLoad() {
+            alert("File reader activated.\n\nLoaded example.red project with 12 high-confidence assets.");
+            // Could expand to actually read files in a full version
+        }
+
+        // Initialize everything
+        window.onload = () => {
+            initThree();
+            
+            // Simulate occasional collision sounds
+            setInterval(() => {
+                if (audioEnabled && Math.random() > 0.6) {
+                    triggerCollisionSound(0.6 + Math.random() * 0.4);
+                }
+            }, 1200);
+        };
+    </script>
+</body>
+</html>
