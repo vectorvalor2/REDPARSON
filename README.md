@@ -1,16 +1,57 @@
 # REDPARSON GAME ENGINE
 
-**A Safe Simulated 3D Game Engine & Creative Platform**
+**A Safe Simulated 3D Game Engine & All-in-One Creative Platform**
 
-Built with **Three.js + Web Audio API** — Fully functional in the browser.
+Built with **Three.js + Web Audio API + Safe AI Sim**. Fully browser-based, modular, and safety-first.
 
-![Screenshot](assets/screenshot.png)
-Tech StackThree.js (WebGL)
-Web Audio API
-Vanilla HTML/CSS/JS
-Modular & Extensible Architecture
+---
 
-# REDPARSON Architecture
+## Overview
+
+REDPARSON is a complete creative platform for building 3D games, simulations, and interactive experiences in a **safe sandbox**. It combines powerful real-time 3D editing with AI-assisted scene generation, golden-ratio composition, physics-audio synchronization, and enterprise-grade safety systems.
+
+**Core Philosophy**: "Build without fear" — Every asset, placement, and interaction is continuously validated through the Safe AI Sim confidence engine.
+
+---
+
+## ✨ Key Features
+
+### Core Capabilities
+- **Safe AI Sim Engine**: High-confidence asset identification, indexing, interlocking, and interlinking using the golden ratio (φ ≈ 1.618)
+- **Real-time 3D Viewport**: Up to 4K rendering with interactive placement and drag-and-drop
+- **Physics + Audio Synthesis Layer**: Real-time synchronization
+  - Collision intensity (relative velocity) drives volume and low-frequency impact
+  - Collision frequency controls pitch and rhythm
+  - Particle bursts trigger layered, randomized SFX
+- **Material & Texture Editor**: Live material building with texture library support
+- **Project & Asset Management**: Full file I/O, project library, texture library, and scene modifiers
+- **Performance Monitoring**: Real-time logs, FPS charts, memory usage, and bottleneck analysis
+- **Modular Code Generation**: Pluggable AI provisioner for scene hierarchies and asset generation
+
+### Editor Tools
+- Object drag-and-drop with snapping
+- Interactive placement with golden ratio guides
+- Scene Modifier: Extract assets → Generate full scenes, levels, simulations, and particle systems
+- Project Templates with built-in separation of concerns and cross-cutting concern handling
+- Responsive, adaptive dashboard (works beautifully on desktop, tablet, and mobile)
+
+---
+
+## Architecture
+
+### High-Level Flow
+
+```mermaid
+graph TD
+    A[CI/CD Pipeline] --> B[Sandbox Zones]
+    B --> C[Asset Registry + Confidence Engine]
+    C --> D[Safety Bounds & Risk Gates]
+    D --> E[Transform Checkpoints]
+    E --> F[Golden Ratio Layout Optimizer]
+    F --> G[Scene Graph + Interlocking/Interlinking]
+    G --> H[MVP Clip Space]
+    H --> I[Risk-Gated Safe Render Output]
+    I --> J[Active Viewport + Physics/Audio Sync]
 
 ### Dictionaries/Methods for Data/Code in BPS
 
