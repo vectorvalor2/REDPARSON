@@ -41,7 +41,6 @@ REDPARSON is a complete creative platform for building 3D games, simulations, an
 
 ### High-Level Flow
 
-```mermaid
 graph TD
     A[CI/CD Pipeline] --> B[Sandbox Zones]
     B --> C[Asset Registry + Confidence Engine]
