@@ -19,7 +19,7 @@ Modular & Extensible Architecture
 - **Base44 Conversion**: Efficient encoding/decoding of bitstream data at optimized BPS rates
 - **Cross-Layer Translation**: Data/code methods optimized for performance across all architecture layers
 
-### Safe AI Sim
+### Safe AI Sim - AI Scene Generation(Modular)
 
 **Safe AI Simulation Framework for High-Confidence 3D Asset Management and Rendering**
 
