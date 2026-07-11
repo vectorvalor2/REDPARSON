@@ -47,7 +47,6 @@ Safe AI Sim provides a complete architecture for creating trustworthy 3D simulat
 
 ### High-Level Layers
 
-```mermaid
 graph TD
     A[Abstract Classes & Domain Models] --> B[Asset Registry & Confidence Engine]
     B --> C[Golden Ratio Layout Optimizer]
